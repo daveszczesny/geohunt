@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+
+  <header>
+    <center>
+      <div class="header">
+        <h1>Geo-Hunt;</h1>
+      </div>
+    </center>
+    <button style="color: black;" class="settings-button"><i class="fas fa-cog"></i></i></button>
+  </header>
+</head>
+
+<body>
+
+  <main>
+    <div id="preLobbyDiv" class="container">
+      <div class="wrapper">
+        <div class="title"><span>Geo-Hunt Login</span></div>
+        <form action="#" autocomplete="off">
+          <div class="row">
+            <i class="fas fa-user"></i>
+            <input id="displayname" type="text" placeholder="Username" required>
+          </div>
+          <div class="row">
+            <i class='fas fa-users'></i>
+            <input id="lobbyname" type="text" placeholder="Lobby Name" required>
+          </div>
+          <div class="row">
+            <i class="fas fa-lock"></i>
+            <input id="password" type="text" placeholder="Lobby Password" required>
+          </div>
+          <div class="row button">
+            <input type="button" id="loginbutton" value="Login">
+          </div>
+          <p id="wrongpassword">Wrong password</p>
+
+        </form>
+      </div>
+    </div>
+
+
+
+    <div id="lobbyDiv" class="container">
+      <div class="wrapper">
+        <div class="title"><span id="lobbyTitle">Lobby Name</span></div>
+        <div class="player-list">
+          <center>
+            <ul id="myList">
+              
+            </ul>
+          </center>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="bundle.js"></script>
+</body>
+
+</html>
