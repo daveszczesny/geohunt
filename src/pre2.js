@@ -3,7 +3,7 @@
 */
 
 import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth"
-import { onDisconnect, onValue, ref, getDatabase, get, child, remove } from "firebase/database";
+import { onDisconnect, onValue, ref, getDatabase, get, child, remove, update } from "firebase/database";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot } from "firebase/firestore"
 
 // consts
@@ -16,13 +16,58 @@ const database = getDatabase();
 
 // DOMS
 const displayName = document.getElementById('displayname');
-const lobbyname = document.getElementById('lobbyname');
+var lobbyname = document.getElementById('lobbyname');
 const btn = document.getElementById('loginbutton');
 const password = document.getElementById("password");
 const inLobby = require("./inlobby")
 
 
-const colRef = collection(db, "lobbys");
+/*
+Temp start button
+*/
+const startGameBtn = document.getElementById("startGameBtn");
+startGameBtn.addEventListener('click', () => {
+    // change setting of lobby
+    update(ref(database, lobbyname.value + "/settings/"), {
+        start: true
+    });
+
+
+    // read game settings
+
+    get(child(ref(database), lobbyname.value + "/settings/gameSettings/")).then((snapshot) => {
+        if (snapshot.val()["hunter_selection"] == "random") {
+            // randomly allocates a hunter
+
+            get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
+                const random = Math.floor(Math.random() * Object.keys(snap.val()).length)
+
+                update(ref(database, lobbyname.value + "/users/" + Object.keys(snap.val())[random]), {
+                    team: "hunter"
+                })
+
+            })
+        }
+    })
+
+    // code to print out all available settings
+    // get(child(ref(database), lobbyname.value + "/settings/gameSettings/")).then((snapshot) => {
+
+    //     Object.keys(snapshot.val()).forEach(setting =>{
+    //         console.log(setting)
+    //     })
+
+    // })
+
+
+
+})
+
+lobbyname.addEventListener("change", () => {
+    lobbyname = document.getElementById("lobbyname");
+})
+
+
 
 /*
 +--------------------------------------------------------+
@@ -39,15 +84,18 @@ password.addEventListener('focus', () => {
 
             // checks if the lobby is apart of garbage,
             // aka if the lobby has been left behind without any users.
-            get(child(dbRef, lobbyname.value + "/users")).then((snap2)=>{
-                if(!snap2.exists()){
+            get(child(dbRef, lobbyname.value + "/users")).then(async (snap2) => {
+                if (await (!snap2.exists())) {
                     remove(dbRef, lobbyname.value)
+                    btn.value = "create"
+                } else {
+                    btn.value = "join"
                 }
             });
 
-            console.log(snap.val());
-            btn.value = "join"
+
         } else {
+
             btn.value = "create"
         }
     })
@@ -75,7 +123,7 @@ btn.addEventListener('click', async () => {
         get(child(dbRef, lobbyname.value + "/settings")).then((snap) => {
             if (password.value == snap.val()["password"]) {
                 signInAnonymously(auth).then(async () => {
-                    rtdb.writeUser(auth.currentUser.uid, displayName, lobbyname, false);
+                    rtdb.writeUser(auth, displayName, lobbyname);
                 })
                 inLobby.listener(lobbyname)
                 __displayLobby();
@@ -90,8 +138,8 @@ btn.addEventListener('click', async () => {
     if (btn.value == "create") {
         rtdb.createLobby(lobbyname, password);
 
-        signInAnonymously(auth).then(async () => {
-            rtdb.writeUser(auth.currentUser.uid, displayName, lobbyname, true);
+        signInAnonymously(auth).then(() => {
+            rtdb.writeUser(auth, displayName, lobbyname);
         })
         inLobby.listener(lobbyname)
         __displayLobby();
@@ -115,3 +163,8 @@ function __displayLobby() {
 
     inLobby.loadLobbyName();
 }
+
+
+//const userRTDBRef = ref(database, lobbyname.value + "/users/" + auth.currentUser.uid)
+
+

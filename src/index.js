@@ -9,7 +9,6 @@
 
 import { initializeApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions"
-import { getDatabase, increment, ref } from "firebase/database";
 
 // firebase config
 const firebaseConfig = {
@@ -25,9 +24,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);
+
 const delUser = httpsCallable(functions, "deleteUser"); // cloud functions
 
 require("./pre2");
+require("./geolocation_getter")
 
 
 // Things to do right after window loads
@@ -35,11 +36,11 @@ window.onload = () => {
     // makes the lobby screen invisible
     document.getElementById("lobbyDiv").style = "display: none"
     document.getElementById("wrongpassword").style = "display: none"
+    document.getElementById("inGameSection").style = "display: none"
 }
 
-// THings to do right after window closes
-// window.onunload = () => {
-//     
-//     delUser()  // cloud function to delete user
-// }
 
+window.onunload = () =>
+{
+    delUser(); // cloud function
+}

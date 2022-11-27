@@ -21,6 +21,12 @@ body {
 
 }
 
+.gameContainer {
+  max-width: 440px;
+  padding: 0 10px;
+  margin: 10px auto;
+}
+
 .wrapper {
   width: 100%;
   background: #fff;
@@ -120,6 +126,14 @@ h1 {
   font-size: 30px;
 }
 
+.inGameMap {
+  padding: 0px 0px 0px;
+
+}
+
+.inGameMap.container {
+  border: 3px solid green;
+}
 
 #wrongpassword {
   display: none;
@@ -134,3 +148,5 @@ ul {
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
 }
+
+

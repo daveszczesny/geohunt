@@ -6,7 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
-
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9HE-hOwNB8WI2dKJUFKsfE3ZOT-qJPmw&callback=initMap&v=weekly"
+    defer></script>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <header>
     <center>
       <div class="header">
@@ -47,20 +50,33 @@
 
 
 
-    <div id="lobbyDiv" class="container">
+    <div style="display: none" id="lobbyDiv" class="gameContainer">
       <div class="wrapper">
         <div class="title"><span id="lobbyTitle">Lobby Name</span></div>
         <div class="player-list">
           <center>
             <ul id="myList">
-              
+
             </ul>
+
+            <div id="startGameDiv" style="display: none">
+              <button id="startGameBtn">Start</button>
+            </div>
           </center>
         </div>
       </div>
     </div>
+
+    <section id="inGameSection" class="inGameMap" style="display: none">
+      <div class="gameContainer">
+        <div id="googleMap" style="width:100%; height: 90vh;"></div>
+      </div>
+
+    </section>
   </main>
   <script src="bundle.js"></script>
+
+
 </body>
 
 </html>

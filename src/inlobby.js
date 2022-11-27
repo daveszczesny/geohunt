@@ -1,14 +1,9 @@
 
-import { getAuth } from "firebase/auth";
-import { getDatabase, onValue, update, increment, ref, onDisconnect, get, child } from "firebase/database";
-import { doc, getFirestore } from "firebase/firestore"
+import { getDatabase, onValue, update, ref } from "firebase/database";
 
-const auth = getAuth();
-const db = getFirestore();
 const database = getDatabase();
 
 const lobbytitle = document.getElementById('lobbyTitle');
-const lobbyname = document.getElementById("lobbyname");
 
 
 export function loadLobbyName() {
@@ -36,36 +31,20 @@ export function listener(lobbyname) {
     const lobRef = ref(database, lobbyname.value + "/users")
     onValue(lobRef, (snap) => {
         document.getElementById("myList").innerHTML = " ";
-        var foo = 0;
         snap.forEach(x => {
             loadUser(x.val()["display_name"], x.val()["host"])
-            foo++;
-        })
-        
-        update(ref(database, lobbyname.value + "/settings"), {
-            playerCount: foo
         })
 
     })
 
-    if (auth.currentUser != null) {
-        const userAuth = auth.currentUser;
-        const userRTDBRef = ref(database, lobbyname.value + "/users/" + auth.currentUser.uid)
-        console.log("<REF> : " + lobbyname.value)
-        const connectedRef = ref(database, ".info/connected");
+    onValue(ref(database, lobbyname.value + "/settings/start"), (snap) => {
+        if (snap.val()) {
+            document.getElementById("lobbyDiv").style = "display: none"
+            document.getElementById("inGameSection").style = "display: block"
+            
+            
+        }
+    })
 
-        // actively listens for change of online status
-        onValue(connectedRef, (snap) => {
-            // if connection exists, user exists and their rtdb ref exists
-            // it listens if that user disconnections.
-            // removes instance of user on rtdb if they disconnect.
-            if (snap.val() == true && userAuth !== null && userRTDBRef !== null) {
-                onDisconnect(userRTDBRef, () => {
-
-                    delUser()
-
-                }).remove()
-            }
-        })
-    }
 }
+
