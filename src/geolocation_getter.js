@@ -7,7 +7,6 @@ import { getAuth } from "firebase/auth"
 const auth = getAuth();
 const database = getDatabase();
 const lobbyname = document.getElementById("lobbyname")
-let markers = []
 let circles = []
 
 
@@ -37,14 +36,6 @@ function initMap() {
         })
     }
     
-
-    function addMarker(coords) {
-        const marker = new google.maps.Marker({
-            position: coords,
-            map: map
-        })
-        markers.push(marker);
-    }
 
 
     function drawCircle(coords){
@@ -95,10 +86,6 @@ function initMap() {
                         lng: position.coords.longitude,
                     };
 
-                    // infoWindow.setPosition(pos);
-                    // infoWindow.setContent("Location found.");
-                    // infoWindow.open(map);
-                    // map.setCenter(pos);
 
                     // get all the other players in the lobby and add them to map;
 
@@ -113,7 +100,6 @@ function initMap() {
 
                     get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
                         snap.forEach(x => {
-                            console.log(x.val()["location"])
                             //addMarker(x.val()["location"])
                             drawCircle(x.val()["location"])
                         })

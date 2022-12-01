@@ -51,7 +51,8 @@ export function createLobby(lobbyname, password) {
         password: password.value,
         start: false,
         gameSettings: {
-            hunter_selection: "random"
+            hunter_selection: "random",
+            in_game_names: true
         }
     })
 
