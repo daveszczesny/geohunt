@@ -16,7 +16,7 @@ export function writeUser(auth, displayname, lobbyname) {
         location: null,
         team: "hunted"
     });
-
+    require("./geolocation_getter")
     get(child(ref(database), lobbyname.value + "/users")).then((snap)=>{  
         if(Object.keys(snap.val()).length == 1){
             
@@ -24,6 +24,7 @@ export function writeUser(auth, displayname, lobbyname) {
                 host: true
             })
             document.getElementById("startGameDiv").style="display: block";
+            
             
         }
 

@@ -2,17 +2,16 @@
 @author: Dave
 */
 
-import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth"
-import { onDisconnect, onValue, ref, getDatabase, get, child, remove, update } from "firebase/database";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot } from "firebase/firestore"
+import { getAuth, signInAnonymously } from "firebase/auth"
+import { ref, getDatabase, get, child, remove, update } from "firebase/database";
 
 // consts
 const auth = getAuth();
-const db = getFirestore();
 const database = getDatabase();
 
 
-
+// general functions for rtdb
+const rtdb_functions = require("./rtdb_functions");
 
 // DOMS
 const displayName = document.getElementById('displayname');
@@ -32,23 +31,22 @@ startGameBtn.addEventListener('click', () => {
         start: true
     });
 
-
     // read game settings
 
-    get(child(ref(database), lobbyname.value + "/settings/gameSettings/")).then((snapshot) => {
-        if (snapshot.val()["hunter_selection"] == "random") {
-            // randomly allocates a hunter
+    const snap_val = rtdb_functions.getSettingValue("hunter_selection", lobbyname);
 
-            get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
-                const random = Math.floor(Math.random() * Object.keys(snap.val()).length)
+    if (snap_val == "random") {
+        // randomly allocates a hunter
 
-                update(ref(database, lobbyname.value + "/users/" + Object.keys(snap.val())[random]), {
-                    team: "hunter"
-                })
+        get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
+            const random = Math.floor(Math.random() * Object.keys(snap.val()).length)
 
+            update(ref(database, lobbyname.value + "/users/" + Object.keys(snap.val())[random]), {
+                team: "hunter"
             })
-        }
-    })
+
+        })
+    }
 
     // code to print out all available settings
     // get(child(ref(database), lobbyname.value + "/settings/gameSettings/")).then((snapshot) => {
