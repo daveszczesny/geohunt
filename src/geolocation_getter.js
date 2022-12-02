@@ -20,7 +20,6 @@ lobbyname.addEventListener('change', () => {
     lobbyname = document.getElementById('lobbyname')
 })
 
-console.log(" > gg.js | " + in_game_names_setting + ", " + checks_settings)
 
 function initMap() {
     definePopupClass();
@@ -99,13 +98,11 @@ function initMap() {
     Temp button for now
     */
 
-    locationBtn.addEventListener("click", () => {
+    locationBtn.addEventListener("click", async() => {
 
         if (!checks_settings) {
-
-            get(child(ref(getDatabase()), lobbyname.value + "/settings/gameSettings/")).then((snapshot) => {
-                in_game_names_setting = snapshot.val()["in_game_names"]
-            });
+            in_game_names_setting = await rtdb.getSettingValue('in_game_names', lobbyname);
+            console.log(in_game_names_setting)
             checks_settings = true
         }
 
@@ -138,7 +135,6 @@ function initMap() {
                             let temp = document.createElement('div');
                             temp.innerHTML = x.val()["display_name"]
                             document.getElementById('googleMap').appendChild(temp);
-                            console.log(" > gg.js | " + in_game_names_setting + ", " + checks_settings)
                             if (in_game_names_setting) {
                                 popup = new Popup(
                                     new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),

@@ -1,8 +1,8 @@
 
-import { getDatabase, onValue, update, ref } from "firebase/database";
+import { getDatabase, onValue, update, ref, get, child } from "firebase/database";
 
 const database = getDatabase();
-
+const rtdb = require("./rtdb_functions")
 const lobbytitle = document.getElementById('lobbyTitle');
 
 
@@ -41,10 +41,48 @@ export function listener(lobbyname) {
         if (snap.val()) {
             document.getElementById("lobbyDiv").style = "display: none"
             document.getElementById("inGameSection").style = "display: block"
-            
-            
+
+
         }
     })
 
 }
 
+
+export function __displayLobby() {
+
+    document.getElementById('lobbyDiv').style = 'display:block';
+    document.getElementById('preLobbyDiv').style = 'display:none';
+    loadStartButton();
+
+    loadLobbyName();
+
+}
+
+export function loadStartButton() {
+    const startGameBtn = document.getElementById("startGameBtn");
+    startGameBtn.addEventListener('click', async () => {
+        // change setting of lobby
+        update(ref(database, lobbyname.value + "/settings/"), {
+            start: true
+        });
+
+        // read game settings
+
+        const snap_val = await rtdb.getSettingValue("hunter_selection", lobbyname);
+
+        if (snap_val == "random") {
+            // randomly allocates a hunter
+
+            get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
+                const random = Math.floor(Math.random() * Object.keys(snap.val()).length)
+
+                update(ref(database, lobbyname.value + "/users/" + Object.keys(snap.val())[random]), {
+                    team: "hunter"
+                })
+
+            })
+        }
+
+    })
+}
