@@ -20,7 +20,6 @@ const btn = document.getElementById('loginbutton');
 const password = document.getElementById("password");
 const inLobby = require("./inlobby")
 
-
 /*
 Temp start button
 */

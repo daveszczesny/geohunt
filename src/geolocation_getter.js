@@ -1,18 +1,26 @@
+
 let map, infoWindow, popup, Popup;
 
 import { get, getDatabase, ref, update, child } from "firebase/database";
 import { getAuth } from "firebase/auth"
 
+const rtdb = require("./rtdb_functions")
 
 
 const auth = getAuth();
 const database = getDatabase();
-const lobbyname = document.getElementById("lobbyname")
+var lobbyname = document.getElementById("lobbyname")
 let circles = []
 let popups = []
 
+let in_game_names_setting = false;
+let checks_settings = false;
 
+lobbyname.addEventListener('change', () => {
+    lobbyname = document.getElementById('lobbyname')
+})
 
+console.log(" > gg.js | " + in_game_names_setting + ", " + checks_settings)
 
 function initMap() {
     definePopupClass();
@@ -93,6 +101,15 @@ function initMap() {
 
     locationBtn.addEventListener("click", () => {
 
+        if (!checks_settings) {
+
+            get(child(ref(getDatabase()), lobbyname.value + "/settings/gameSettings/")).then((snapshot) => {
+                in_game_names_setting = snapshot.val()["in_game_names"]
+            });
+            checks_settings = true
+        }
+
+
         clearProxyAreas();
         //HTML 5 Geolocation supported
         if (navigator.geolocation) {
@@ -117,16 +134,18 @@ function initMap() {
 
                     get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
                         snap.forEach(x => {
-                            //addMarker(x.val()["location"])
                             drawCircle(x.val()["location"])
                             let temp = document.createElement('div');
                             temp.innerHTML = x.val()["display_name"]
                             document.getElementById('googleMap').appendChild(temp);
-                            popup = new Popup(
-                                new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
-                                temp);
+                            console.log(" > gg.js | " + in_game_names_setting + ", " + checks_settings)
+                            if (in_game_names_setting) {
+                                popup = new Popup(
+                                    new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
+                                    temp);
 
-                            popups.push(popup);
+                                popups.push(popup);
+                            }
 
                         })
                     })

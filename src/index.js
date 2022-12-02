@@ -29,7 +29,7 @@ const delUser = httpsCallable(functions, "deleteUser"); // cloud functions
 
 require("./pre2");
 
-require("./geolocation_getter")
+require('./geolocation_getter')
 
 // Things to do right after window loads
 window.onload = () => {
