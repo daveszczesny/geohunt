@@ -27,8 +27,7 @@ const functions = getFunctions(app);
 
 const delUser = httpsCallable(functions, "deleteUser"); // cloud functions
 
-require("./pre2");
-
+require("./prelobby")
 require('./geolocation_getter')
 
 // Things to do right after window loads
