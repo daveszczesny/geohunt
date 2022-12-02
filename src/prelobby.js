@@ -63,14 +63,6 @@ btn.addEventListener('click',  () => {
 
 });
 
-/*
-    Private functions
-    Start with __, 'double underscore'
-*/
-
-
-// Function to change the current display from the login to the lobby menu
-
 
 /*
 +--------------------------------------------------------+

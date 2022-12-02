@@ -6,10 +6,14 @@ const rtdb = require("./rtdb_functions")
 const lobbytitle = document.getElementById('lobbyTitle');
 
 
+// loads the lobby name onto the lobby title
 export function loadLobbyName() {
     lobbytitle.innerHTML = document.getElementById("lobbyname").value
 }
 
+
+// we load the user into the lobby
+// we check if they are host and add host icon if they are
 export function loadUser(displayname, host) {
     const node = document.createElement("li");
     const userNode = document.createTextNode(displayname);
@@ -27,6 +31,9 @@ export function loadUser(displayname, host) {
 }
 
 
+// listener functions
+// We listen to see if anything changes with the user
+// and preform the necessary actions as a result
 export function listener(lobbyname) {
     const lobRef = ref(database, lobbyname.value + "/users")
     onValue(lobRef, (snap) => {
@@ -37,6 +44,7 @@ export function listener(lobbyname) {
 
     })
 
+    // when the game starts, update for every player
     onValue(ref(database, lobbyname.value + "/settings/start"), (snap) => {
         if (snap.val()) {
             document.getElementById("lobbyDiv").style = "display: none"
@@ -49,6 +57,7 @@ export function listener(lobbyname) {
 }
 
 
+// display lobby
 export function __displayLobby() {
 
     document.getElementById('lobbyDiv').style = 'display:block';
@@ -59,6 +68,7 @@ export function __displayLobby() {
 
 }
 
+// displays the start button for the host
 export function loadStartButton() {
     const startGameBtn = document.getElementById("startGameBtn");
     startGameBtn.addEventListener('click', async () => {

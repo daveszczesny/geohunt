@@ -43,6 +43,7 @@ function initMap() {
     google.maps.event.addListener(map, 'zoom_changed', () => {
         var zoom = map.getZoom();
 
+        // dont draw labels if we are far out from the map
         if (zoom >= 13) {
             drawNameLabels(map);
         } else {
@@ -50,18 +51,19 @@ function initMap() {
         }
     })
 
+    // these are the red circles
     function clearProxyAreas() {
         circles.forEach(x => {
             x.setMap();
         })
     }
 
+    // these are the display name labels
     function drawNameLabels(foo) {
         popups.forEach(x => {
             x.setMap(foo);
         })
     }
-
 
 
     function drawCircle(coords) {
@@ -98,11 +100,10 @@ function initMap() {
     Temp button for now
     */
 
-    locationBtn.addEventListener("click", async() => {
+    locationBtn.addEventListener("click", async () => {
 
         if (!checks_settings) {
             in_game_names_setting = await rtdb.getSettingValue('in_game_names', lobbyname);
-            console.log(in_game_names_setting)
             checks_settings = true
         }
 
@@ -132,9 +133,11 @@ function initMap() {
                     get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
                         snap.forEach(x => {
                             drawCircle(x.val()["location"])
+                            // labels require a div to be drawn onto, here we create a temp div for that
                             let temp = document.createElement('div');
                             temp.innerHTML = x.val()["display_name"]
                             document.getElementById('googleMap').appendChild(temp);
+                            // reads if we have in game names allowed
                             if (in_game_names_setting) {
                                 popup = new Popup(
                                     new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
@@ -158,6 +161,9 @@ function initMap() {
     });
 }
 
+/*
+    Label popup function
+*/
 
 function definePopupClass() {
     /**

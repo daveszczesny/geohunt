@@ -17,6 +17,12 @@ export async function getSettingValue(setting, lobbyname) {
     return a;
 }
 
+export async function getAllSettings(lobbyname){
+    await get(child(ref(database), lobbyname.value + "/settings/gameSettings/")).then(snapshot => {
+        return snapshot.val();
+    });
+}
+
 /*
 +-----------------------------------------------+
 |   Writes user to rtdb
