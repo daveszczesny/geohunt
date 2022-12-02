@@ -16,7 +16,6 @@ export function writeUser(auth, displayname, lobbyname) {
         location: null,
         team: "hunted"
     });
-
     get(child(ref(database), lobbyname.value + "/users")).then((snap)=>{  
         if(Object.keys(snap.val()).length == 1){
             
@@ -24,6 +23,7 @@ export function writeUser(auth, displayname, lobbyname) {
                 host: true
             })
             document.getElementById("startGameDiv").style="display: block";
+            
             
         }
 
@@ -51,7 +51,8 @@ export function createLobby(lobbyname, password) {
         password: password.value,
         start: false,
         gameSettings: {
-            hunter_selection: "random"
+            hunter_selection: "random",
+            in_game_names: true
         }
     })
 
