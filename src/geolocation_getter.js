@@ -1,7 +1,7 @@
 
 let map, infoWindow, popup, Popup;
 
-import { get, getDatabase, ref, update, child } from "firebase/database";
+import { get, getDatabase, ref, update, child, remove } from "firebase/database";
 import { getAuth } from "firebase/auth"
 
 const rtdb = require("./rtdb_functions")
@@ -58,6 +58,14 @@ function initMap() {
         })
     }
 
+    function removeLabel(){
+        popups.forEach(x => {
+            x.setMap();
+        })
+
+        popups = [];
+    }
+
     // these are the display name labels
     function drawNameLabels(foo) {
         popups.forEach(x => {
@@ -109,6 +117,7 @@ function initMap() {
 
 
         clearProxyAreas();
+        removeLabel();
         //HTML 5 Geolocation supported
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(

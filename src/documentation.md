@@ -18,13 +18,12 @@ Sets up the password and button functionality
 Important script that allows us to call to the real time database
 Here are the functions that it contains
 
-# getSettingValue('<setting name>', <lobby>) returns snapshot.val()['setting'], which is the value of that setting
+getSettingValue('<setting name>', <lobby>) returns snapshot.val()['setting'], which is the value of that setting
 
-# getAllSettings(<lobby>) returns snapshot.val(), allowing user to check each setting or have them all print out
+getAllSettings(<lobby>) returns snapshot.val(), allowing user to check each setting or have them all print out
+writeUser(auth, <display_name>, <lobby>), sets up a new user in <lobby>
 
-# writeUser(auth, <display_name>, <lobby>), sets up a new user in <lobby>
-
-# createLobby(<lobby>, <password>), creates a new lobby
+createLobby(<lobby>, <password>), creates a new lobby
 
 
 ## inlobby.js

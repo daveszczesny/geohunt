@@ -25,6 +25,23 @@ export async function getAllSettings(lobbyname){
 
 /*
 +-----------------------------------------------+
+|   Checks if user exists
++-----------------------------------------------+
+*/
+
+export async function isUser(displayname, lobbyname){
+    get(child(ref(database), lobbyname.value + "/users/")).then(snap => {
+        snap.forEach(user_uid => {
+            if(user_uid.val()['display_name'] == displayname){
+                return true;
+            }
+        })
+    });
+    return false;
+}
+
+/*
++-----------------------------------------------+
 |   Writes user to rtdb
 +-----------------------------------------------+
 */

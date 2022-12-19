@@ -19,6 +19,9 @@ lobbyname.addEventListener('change', () => {
     lobbyname = document.getElementById('lobbyname');
 })
 
+
+
+
 /*
 +--------------------------------------------------------+
 |   Button on click event
@@ -31,11 +34,11 @@ lobbyname.addEventListener('change', () => {
 +--------------------------------------------------------+
 */
 
-btn.addEventListener('click',  () => {
+btn.addEventListener('click', () => {
 
     if (btn.value == 'join') {
         // check if password is correct
-        get(child(ref(database), lobbyname.value + '/settings')).then((snap) => {
+        get(child(ref(database), lobbyname.value + '/settings')).then(async (snap) => {
             if (password.value == snap.val()['password']) {
                 signInAnonymously(auth).then(() => {
                     rtdb.writeUser(auth, displayName, lobbyname);
@@ -72,7 +75,7 @@ btn.addEventListener('click',  () => {
 +--------------------------------------------------------+
 */
 password.addEventListener('focus', () => {
-  
+
     get(child(ref(database), lobbyname.value)).then((snap) => {
 
         if (snap.exists()) {
