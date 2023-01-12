@@ -24,7 +24,7 @@ lobbyname.addEventListener('change', () => {
 function initMap() {
     definePopupClass();
     map = new google.maps.Map(document.getElementById("googleMap"), {
-        center: { lat: 30.541577473240668, lng: -89.84146672885014 },
+        center: { lat: 53.2366571, lng: -8.8162412 },
         zoom: 13,
         streetViewControl: false,
         mapTypeControl: false,
@@ -58,7 +58,7 @@ function initMap() {
         })
     }
 
-    function removeLabel(){
+    function removeLabel() {
         popups.forEach(x => {
             x.setMap();
         })
@@ -108,7 +108,9 @@ function initMap() {
     Temp button for now
     */
 
+
     locationBtn.addEventListener("click", async () => {
+
 
         if (!checks_settings) {
             in_game_names_setting = await rtdb.getSettingValue('in_game_names', lobbyname);
@@ -139,24 +141,36 @@ function initMap() {
                         location: pos
                     })
 
-                    get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
-                        snap.forEach(x => {
-                            drawCircle(x.val()["location"])
-                            // labels require a div to be drawn onto, here we create a temp div for that
-                            let temp = document.createElement('div');
-                            temp.innerHTML = x.val()["display_name"]
-                            document.getElementById('googleMap').appendChild(temp);
-                            // reads if we have in game names allowed
-                            if (in_game_names_setting) {
-                                popup = new Popup(
-                                    new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
-                                    temp);
+                    /*
+                        We only want to draw the circles of every player, bar the hunter onto the hunter's screen.
+                    */
 
-                                popups.push(popup);
-                            }
+                    // checks if the user is a hunter
 
-                        })
+                    get(child(ref(database), lobbyname.value + "/users/" + auth.currentUser.uid + "/")).then(snapshot => {
+                        if (snapshot.val()["team"] == "hunter") {
+                            get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
+                                snap.forEach(x => {
+                                    drawCircle(x.val()["location"])
+                                    // labels require a div to be drawn onto, here we create a temp div for that
+                                    let temp = document.createElement('div');
+                                    temp.innerHTML = x.val()["display_name"]
+                                    document.getElementById('googleMap').appendChild(temp);
+                                    // reads if we have in game names allowed
+                                    if (in_game_names_setting) {
+                                        popup = new Popup(
+                                            new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
+                                            temp);
+
+                                        popups.push(popup);
+                                    }
+
+                                })
+                            })
+                        }
                     })
+
+
 
 
                 },

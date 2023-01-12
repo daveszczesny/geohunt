@@ -29,6 +29,19 @@ export async function getAllSettings(lobbyname){
 +-----------------------------------------------+
 */
 
+export async function isUserHunter(auth, lobbyname){
+    await get(child(ref(database), lobbyname.value + "/users/"+auth.uid)).then(snapshot => {
+        return snapshot.val();
+    })
+
+}
+
+/*
++-----------------------------------------------+
+|   Checks if user exists
++-----------------------------------------------+
+*/
+
 export async function isUser(displayname, lobbyname){
     get(child(ref(database), lobbyname.value + "/users/")).then(snap => {
         snap.forEach(user_uid => {
