@@ -16,7 +16,7 @@
         <h1>Geo-Hunt;</h1>
       </div>
     </center>
-    <button style="color: black;" class="settings-button"><i class="fas fa-cog"></i></i></button>
+    <button style="color: black;" id="settings-overlay-button" class="settings-button"><i class="fas fa-cog"></i></i></button>
   </header>
 </head>
 
@@ -75,10 +75,61 @@
       <div class="gameContainer">
         <div id="googleMap" style="width:100%; height: 90vh;"></div>
       </div>
+    </section>
+
+    <section id="settings" class="settings">
+      <header>
+        <center><h1>Settings</h1></center> 
+      </header>
+      <div class="options">
+        <table>
+          <tr>
+            <td>Settings 1
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td>Settings 2               
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+              </label>
+            </td> 
+          </tr>
+          <tr>
+            <td>Settings 3
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+              </label>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="options-buttons">
+      </div>
 
     </section>
+
   </main>
   <script src="bundle.js"></script>
+
+  <script>
+    const toggleButton = document.getElementById("settings-overlay-button");
+    const content = document.getElementById("settings");
+
+    toggleButton.addEventListener("click", function() {
+      if(content.style.display == "none") {
+        content.style.display = "block";
+      } else {
+        content.style.display = "none";
+      }
+    });
+  </script>
 
 
 </body>
