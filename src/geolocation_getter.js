@@ -89,7 +89,6 @@ function initMap() {
         circles.push(circ);
     }
 
-
     infoWindow = new google.maps.InfoWindow();
 
     //Creates button to get location
@@ -107,6 +106,8 @@ function initMap() {
     Location is got
     Temp button for now
     */
+
+    //https://cdn-icons-png.flaticon.com/512/843/843324.png
 
 
     locationBtn.addEventListener("click", async () => {
@@ -151,6 +152,12 @@ function initMap() {
                         if (snapshot.val()["team"] == "hunter") {
                             get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
                                 snap.forEach(x => {
+                                    if (x.val()["team"] == "hunter") {
+                                        
+                                        const hunterMarker = new google.maps.
+                                        
+                                        return;
+                                    } // prevents hunters from being displayed at all
                                     drawCircle(x.val()["location"])
                                     // labels require a div to be drawn onto, here we create a temp div for that
                                     let temp = document.createElement('div');
