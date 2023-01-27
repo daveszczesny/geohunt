@@ -10,17 +10,8 @@
 import { initializeApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions"
 
-// firebase config
-const firebaseConfig = {
-    apiKey: "AIzaSyAXm-1aMaGvQHRHIh6RC09aB8ZD8CJgpuk",
-    authDomain: "geohunt-dff18.firebaseapp.com",
-    projectId: "geohunt-dff18",
-    storageBucket: "geohunt-dff18.appspot.com",
-    messagingSenderId: "969092699325",
-    appId: "1:969092699325:web:ce0294c9e7ce302197d3d4",
-    measurementId: "G-JQBVMQ6NBN",
-    databaseURL: "https://geohunt-dff18-default-rtdb.europe-west1.firebasedatabase.app"
-};
+const firebaseConfig = require("./api/firebase.js");
+
 
 const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);

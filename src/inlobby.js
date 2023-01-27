@@ -49,7 +49,7 @@ export function listener(lobbyname) {
         if (snap.val()) {
             document.getElementById("lobbyDiv").style = "display: none"
             document.getElementById("inGameSection").style = "display: block"
-
+            
 
         }
     })

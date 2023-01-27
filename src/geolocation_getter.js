@@ -133,8 +133,6 @@ function initMap() {
 
                     // get all the other players in the lobby and add them to map;
 
-
-
                     /*
                         Writes users location to rtdb whenever event happens
                     */
@@ -153,15 +151,13 @@ function initMap() {
                             get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
                                 snap.forEach(x => {
                                     if (x.val()["team"] == "hunter") {
-                                        
-                                        const hunterMarker = new google.maps.
-                                        
-                                        return;
+                                        console.log("Player is a hunter!")
                                     } // prevents hunters from being displayed at all
                                     drawCircle(x.val()["location"])
                                     // labels require a div to be drawn onto, here we create a temp div for that
                                     let temp = document.createElement('div');
-                                    temp.innerHTML = x.val()["display_name"]
+                                    console.log("????")
+                                    temp.innerHTML = x.val()["display_name"];
                                     document.getElementById('googleMap').appendChild(temp);
                                     // reads if we have in game names allowed
                                     if (in_game_names_setting) {
