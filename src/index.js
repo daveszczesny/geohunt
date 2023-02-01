@@ -10,12 +10,10 @@
 import { initializeApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions"
 
-const firebaseConfig = require("./api/firebase.js");
+const fb = require("./api/firebase")
 
 
-const app = initializeApp(firebaseConfig);
-const functions = getFunctions(app);
-
+const functions = getFunctions(fb.app);
 const delUser = httpsCallable(functions, "deleteUser"); // cloud functions
 
 require("./prelobby")
