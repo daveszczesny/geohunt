@@ -152,10 +152,7 @@ function initMap() {
                                     removeLabel();
                                     snap.forEach(x => {
                                         if (x.val()["team"] == "hunter") {
-                                            console.log("Player is a hunter")
-
-
-                                            return;
+                                            //return;
                                             //console.log("Player is a hunter!")
                                         } // prevents hunters from being displayed at all
                                         
