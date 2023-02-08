@@ -49,7 +49,7 @@ export function listener(lobbyname) {
         if (snap.val()) {
             document.getElementById("lobbyDiv").style = "display: none"
             document.getElementById("inGameSection").style = "display: block"
-            
+
 
         }
     })
@@ -90,10 +90,18 @@ export function loadStartButton() {
                 update(ref(database, lobbyname.value + "/users/" + Object.keys(snap.val())[random]), {
                     team: "hunter"
                 })
-                document.getElementById("team").innerText = "a hunter";
-                document.getElementById('roleArea').style = "background-color: rgb(200,0,0)";
+                get(child(ref(database), lobbyname.value + "/users/" + Object.keys(snap.val())[random] + "/")).then((snapshot) => {
+                    if (snapshot.val()["team"] == "hunter") {
+                        document.getElementById("team").innerText = "a hunter";
+                        document.getElementById('roleArea').style = "background-color: rgb(200,0,0)";
+                    }
+                });
+
             })
+
         }
+
+
 
     })
 }
