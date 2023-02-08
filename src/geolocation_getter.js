@@ -5,7 +5,7 @@ import { get, getDatabase, onValue, ref, update, child, remove, Database } from 
 import { getAuth } from "firebase/auth"
 
 const rtdb = require("./rtdb_functions")
-
+const storage = require("./storageLoader");
 
 const auth = getAuth();
 const database = getDatabase();
@@ -16,9 +16,10 @@ let popups = []
 let in_game_names_setting = false;
 let checks_settings = false;
 
+const hunterIcon = "https://firebasestorage.googleapis.com/v0/b/geohunt-dff18.appspot.com/o/icons%2Fhunter.png?alt=media&token=2bf806bd-98ab-467d-aba7-08270ceeef1b"
+
 lobbyname.addEventListener('change', () => {
     lobbyname = document.getElementById('lobbyname');
-    console.log(lobbyname.value)
 })
 
 
@@ -26,7 +27,7 @@ function initMap() {
     definePopupClass();
     map = new google.maps.Map(document.getElementById("googleMap"), {
         mapId: "bc3210211695b110",
-        center: { lat: 53.2366571, lng: -8.8162412 },
+        center: { lat: 53.274577680197986, lng: -9.052876062047124 },
         zoom: 13,
         streetViewControl: false,
         mapTypeControl: false,
@@ -91,22 +92,30 @@ function initMap() {
         circles.push(circ);
     }
 
+    function drawHunter(coords) {
+        const huntr = new google.maps.Marker({
+            map: map,
+            icon: {
+                url: hunterIcon,
+                size: new google.maps.Size(40, 40),
+                scaledSize: new google.maps.Size(45, 45),
+                anchor: new google.maps.Point(10, 10)
+            },
+            position: coords,
+        })
+        circles.push(huntr);
+    }
+
     infoWindow = new google.maps.InfoWindow();
 
-
-    //if the button is clicked 
-
-    //https://cdn-icons-png.flaticon.com/512/843/843324.png
-
-
-    if(rtdb.getSettingValue('start', lobbyname.value)){
+    if (rtdb.getSettingValue('start', lobbyname.value)) {
         setInterval(async () => {
 
             if (!checks_settings) {
                 in_game_names_setting = await rtdb.getSettingValue('in_game_names', lobbyname);
                 checks_settings = true
             }
-    
+
             //HTML 5 Geolocation supported
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -122,14 +131,14 @@ function initMap() {
                         update(ref(database, lobbyname.value + "/users/" + auth.currentUser.uid), {
                             location: pos
                         })
-                        
+
 
                         /*
                             We only want to draw the circles of every player, bar the hunter onto the hunter's screen.
                         */
-    
+
                         // checks if the user is a hunter
-    
+
 
                         get(child(ref(database), lobbyname.value + "/users/" + auth.currentUser.uid + "/")).then(snapshot => {
                             if (snapshot.val()["team"] == "hunter") {
@@ -138,61 +147,62 @@ function initMap() {
                                     removeLabel();
                                     snap.forEach(x => {
                                         if (x.val()["team"] == "hunter") {
-                                            //return;
-                                            //console.log("Player is a hunter!")
+
+                                            drawHunter(x.val()["location"]);
+
                                         } // prevents hunters from being displayed at all
-                                        
-                                        drawCircle(x.val()["location"])
-                                        // labels require a div to be drawn onto, here we create a temp div for that
+                                        else {
+                                            drawCircle(x.val()["location"])
+       
+                                        }
                                         let temp = document.createElement('div');
                                         temp.innerHTML = x.val()["display_name"];
                                         document.getElementById('googleMap').appendChild(temp);
-    
-    
+
+
                                         // reads if we have in game names allowed
                                         if (in_game_names_setting) {
-                                            
+
                                             popup = new Popup(
                                                 new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
                                                 temp);
-    
+
                                             popups.push(popup);
                                         }
-    
+
                                     })
                                 })
-                            }else if(snapshot.val()["team"] == "hunted"){
+                            } else if (snapshot.val()["team"] == "hunted") {
                                 get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
                                     clearProxyAreas();
                                     removeLabel();
                                     snap.forEach(x => {
                                         if (x.val()["team"] == "hunter") {
                                             return;
-                                            //console.log("Player is a hunter!")
                                         } // prevents hunters from being displayed at all
-                                        
+
                                         drawCircle(x.val()["location"])
                                         // labels require a div to be drawn onto, here we create a temp div for that
                                         let temp = document.createElement('div');
                                         temp.innerHTML = x.val()["display_name"];
                                         document.getElementById('googleMap').appendChild(temp);
-    
-    
+
+
                                         // reads if we have in game names allowed
                                         if (in_game_names_setting) {
-                                            
+
                                             popup = new Popup(
                                                 new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
                                                 temp);
-    
+
                                             popups.push(popup);
                                         }
-    
+
                                     })
                                 })
                             }
                         })
-    
+
                     },
                     () => {
                         handleLocationError(true, infoWindow, map.getCenter());
@@ -203,7 +213,7 @@ function initMap() {
             }
         }, 5000);
     }
-    
+
 
 
 }

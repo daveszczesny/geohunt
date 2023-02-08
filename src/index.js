@@ -7,13 +7,12 @@
 +-------------------------------------------------
 */
 
-import { initializeApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions"
-
+import { getStorage } from "firebase/storage";
 const fb = require("./api/firebase")
 
-
 const functions = getFunctions(fb.app);
+const storage = getStorage(fb.app);
 const delUser = httpsCallable(functions, "deleteUser"); // cloud functions
 
 require("./prelobby")
