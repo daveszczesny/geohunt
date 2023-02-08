@@ -23,13 +23,10 @@ lobbyname.addEventListener('change', () => {
 })
 
 
-
-let player_lastping = ({}
-);
-
 function initMap() {
     definePopupClass();
     map = new google.maps.Map(document.getElementById("googleMap"), {
+        mapId: "bc3210211695b110",
         center: { lat: 53.2366571, lng: -8.8162412 },
         zoom: 13,
         streetViewControl: false,
@@ -97,15 +94,7 @@ function initMap() {
 
     infoWindow = new google.maps.InfoWindow();
 
-    //Creates button to get location
-    const locationBtn = document.createElement("button");
 
-    //Text in the button
-    locationBtn.textContent = "Get Current Location";
-    //Class list for button
-    locationBtn.classList.add("custom-map-control-button");
-    //Where to place the button on the map
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationBtn);
     //if the button is clicked 
 
     //https://cdn-icons-png.flaticon.com/512/843/843324.png
@@ -118,7 +107,6 @@ function initMap() {
                 in_game_names_setting = await rtdb.getSettingValue('in_game_names', lobbyname);
                 checks_settings = true
             }
-    
     
             //HTML 5 Geolocation supported
             if (navigator.geolocation) {
@@ -135,7 +123,6 @@ function initMap() {
                         update(ref(database, lobbyname.value + "/users/" + auth.currentUser.uid), {
                             location: pos
                         })
-
                         
 
                         /*
