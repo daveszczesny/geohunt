@@ -1,7 +1,7 @@
 
 let map, infoWindow, popup, Popup;
 
-import { get, getDatabase, ref, update, child, remove } from "firebase/database";
+import { get, getDatabase, onValue, ref, update, child, remove, Database } from "firebase/database";
 import { getAuth } from "firebase/auth"
 
 const rtdb = require("./rtdb_functions")
@@ -15,11 +15,17 @@ let popups = []
 
 let in_game_names_setting = false;
 let checks_settings = false;
+let start_timer = false;
 
 lobbyname.addEventListener('change', () => {
-    lobbyname = document.getElementById('lobbyname')
+    lobbyname = document.getElementById('lobbyname');
+    console.log(lobbyname.value)
 })
 
+
+
+let player_lastping = ({}
+);
 
 function initMap() {
     definePopupClass();
@@ -102,89 +108,121 @@ function initMap() {
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationBtn);
     //if the button is clicked 
 
-    /*
-    Location is got
-    Temp button for now
-    */
-
     //https://cdn-icons-png.flaticon.com/512/843/843324.png
 
 
-    locationBtn.addEventListener("click", async () => {
+    if(rtdb.getSettingValue('start', lobbyname.value)){
+        setInterval(async () => {
+
+            if (!checks_settings) {
+                in_game_names_setting = await rtdb.getSettingValue('in_game_names', lobbyname);
+                checks_settings = true
+            }
+    
+    
+            //HTML 5 Geolocation supported
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+
+                        /*
+                            Writes users location to rtdb whenever event happens
+                        */
+                        update(ref(database, lobbyname.value + "/users/" + auth.currentUser.uid), {
+                            location: pos
+                        })
+
+                        
+
+                        /*
+                            We only want to draw the circles of every player, bar the hunter onto the hunter's screen.
+                        */
+    
+                        // checks if the user is a hunter
+    
+
+                        get(child(ref(database), lobbyname.value + "/users/" + auth.currentUser.uid + "/")).then(snapshot => {
+                            if (snapshot.val()["team"] == "hunter") {
+                                get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
+                                    clearProxyAreas();
+                                    removeLabel();
+                                    snap.forEach(x => {
+                                        if (x.val()["team"] == "hunter") {
+                                            console.log("Player is a hunter")
 
 
-        if (!checks_settings) {
-            in_game_names_setting = await rtdb.getSettingValue('in_game_names', lobbyname);
-            checks_settings = true
-        }
-
-
-        clearProxyAreas();
-        removeLabel();
-        //HTML 5 Geolocation supported
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-
-
-                    // get all the other players in the lobby and add them to map;
-
-                    /*
-                        Writes users location to rtdb whenever event happens
-                    */
-                    update(ref(database, lobbyname.value + "/users/" + auth.currentUser.uid), {
-                        location: pos
-                    })
-
-                    /*
-                        We only want to draw the circles of every player, bar the hunter onto the hunter's screen.
-                    */
-
-                    // checks if the user is a hunter
-
-                    get(child(ref(database), lobbyname.value + "/users/" + auth.currentUser.uid + "/")).then(snapshot => {
-                        if (snapshot.val()["team"] == "hunter") {
-                            get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
-                                snap.forEach(x => {
-                                    if (x.val()["team"] == "hunter") {
-                                        console.log("Player is a hunter!")
-                                    } // prevents hunters from being displayed at all
-                                    drawCircle(x.val()["location"])
-                                    // labels require a div to be drawn onto, here we create a temp div for that
-                                    let temp = document.createElement('div');
-                                    console.log("????")
-                                    temp.innerHTML = x.val()["display_name"];
-                                    document.getElementById('googleMap').appendChild(temp);
-                                    // reads if we have in game names allowed
-                                    if (in_game_names_setting) {
-                                        popup = new Popup(
-                                            new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
-                                            temp);
-
-                                        popups.push(popup);
-                                    }
-
+                                            return;
+                                            //console.log("Player is a hunter!")
+                                        } // prevents hunters from being displayed at all
+                                        
+                                        drawCircle(x.val()["location"])
+                                        // labels require a div to be drawn onto, here we create a temp div for that
+                                        let temp = document.createElement('div');
+                                        temp.innerHTML = x.val()["display_name"];
+                                        document.getElementById('googleMap').appendChild(temp);
+    
+    
+                                        // reads if we have in game names allowed
+                                        if (in_game_names_setting) {
+                                            
+                                            popup = new Popup(
+                                                new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
+                                                temp);
+    
+                                            popups.push(popup);
+                                        }
+    
+                                    })
                                 })
-                            })
-                        }
-                    })
+                            }else if(snapshot.val()["team"] == "hunted"){
+                                get(child(ref(database), lobbyname.value + "/users/")).then((snap) => {
+                                    clearProxyAreas();
+                                    removeLabel();
+                                    snap.forEach(x => {
+                                        if (x.val()["team"] == "hunter") {
+                                            return;
+                                            //console.log("Player is a hunter!")
+                                        } // prevents hunters from being displayed at all
+                                        
+                                        drawCircle(x.val()["location"])
+                                        // labels require a div to be drawn onto, here we create a temp div for that
+                                        let temp = document.createElement('div');
+                                        temp.innerHTML = x.val()["display_name"];
+                                        document.getElementById('googleMap').appendChild(temp);
+    
+    
+                                        // reads if we have in game names allowed
+                                        if (in_game_names_setting) {
+                                            
+                                            popup = new Popup(
+                                                new google.maps.LatLng(x.val()["location"].lat, x.val()["location"].lng),
+                                                temp);
+    
+                                            popups.push(popup);
+                                        }
+    
+                                    })
+                                })
+                            }
+                        })
+    
+                    },
+                    () => {
+                        handleLocationError(true, infoWindow, map.getCenter());
+                    }
+                );
+            } else {   // Browser doesn't support Geolocation
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+        }, 5000);
+    }
+    
 
 
-
-
-                },
-                () => {
-                    handleLocationError(true, infoWindow, map.getCenter());
-                }
-            );
-        } else {   // Browser doesn't support Geolocation
-            handleLocationError(false, infoWindow, map.getCenter());
-        }
-    });
 }
 
 /*
