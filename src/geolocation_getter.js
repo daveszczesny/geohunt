@@ -15,7 +15,6 @@ let popups = []
 
 let in_game_names_setting = false;
 let checks_settings = false;
-let start_timer = false;
 
 lobbyname.addEventListener('change', () => {
     lobbyname = document.getElementById('lobbyname');

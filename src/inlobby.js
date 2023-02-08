@@ -90,7 +90,8 @@ export function loadStartButton() {
                 update(ref(database, lobbyname.value + "/users/" + Object.keys(snap.val())[random]), {
                     team: "hunter"
                 })
-
+                document.getElementById("team").innerText = "a hunter";
+                document.getElementById('roleArea').style = "background-color: rgb(200,0,0)";
             })
         }
 
